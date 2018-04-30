@@ -13,11 +13,7 @@
     }
   ],
   "type": "library",
-  "license": "mit",
-  "require": {
-  },
-  "require-dev": {
-  },
+  "license": "MIT",
   "autoload": {
     "psr-4": {
       "MaxxBase\\": "src/"
