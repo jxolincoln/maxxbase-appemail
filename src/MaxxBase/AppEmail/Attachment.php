@@ -19,9 +19,8 @@ class Attachment
      * @param $fileName - Name the file will have when attached
      * @param $fileData - Raw file data
      *
-     * @return $this
      */
-    public function __construction($fileName, $fileData)
+    public function __construct($fileName, $fileData)
     {
         $this->setFileName($fileName);
         $this->setFileData($fileData);
@@ -72,7 +71,7 @@ class Attachment
      * STATICALLY GENERATE A NEW ATTACHMENT USING A FILE PATH, AND RETURN IT IMMEDIATELY
      *
      * @param $filePath - Path of file to attach
-     *
+     * @throws Exceptions\EmailAttachmentException
      * @return Attachment
      */
     public static function generateFromPath($filePath)
@@ -80,6 +79,10 @@ class Attachment
         //TODO LIMIT WHERE FILES CAN COME FROM -- POTENTIAL SECURITY RISK
         $fileName = basename($filePath);
         $content  = file_get_contents($filePath);
+
+        if(! is_file($filePath)){
+            throw new Exceptions\EmailAttachmentException("The supplied file: {$filePath} is not a regular file.",500);
+        }
 
         return Attachment::generate($fileName, $content);
     }

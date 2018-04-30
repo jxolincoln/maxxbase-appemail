@@ -46,7 +46,7 @@ class EmailAddress
      * @param $emailAddress
      * @param \Closure|null $validationFunction
      * @return $this
-     * @throws InvalidEmailAddressException
+     * @throws Exceptions\InvalidEmailAddressException
      */
     public function validate($emailAddress, \Closure $validationFunction = null)
     {
@@ -91,7 +91,7 @@ class EmailAddress
             }
         }
         if ($isValid == false) {
-            throw new InvalidEmailAddressException("Invalid email address {$emailAddress}", 500);
+            throw new Exceptions\InvalidEmailAddressException("Invalid email address {$emailAddress}", 500);
         }
 
         return $this;

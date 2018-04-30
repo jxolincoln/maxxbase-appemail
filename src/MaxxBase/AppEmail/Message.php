@@ -230,14 +230,14 @@ class Message
      * @param Attachment $attachment
      *
      * @return $this
-     * @throws AppEmailException
+     * @throws Exceptions\AppEmailException
      */
     public function addAttachment(Attachment $attachment)
     {
         try {
             array_push($this->_attachments, $attachment);
         } catch (\Exception $e) {
-            throw new AppEmailException("Could not add Attachment", 500, $e);
+            throw new Exceptions\AppEmailException("Could not add Attachment", 500, $e);
         }
 
         return $this;
@@ -249,14 +249,14 @@ class Message
      * @param $filePath
      *
      * @return $this
-     * @throws AppEmailException
+     * @throws Exceptions\AppEmailException
      */
     public function attachFile($filePath)
     {
         try {
             array_push($this->_attachments, Attachment::generateFromPath($filePath));
         } catch (\Exception $e) {
-            throw new AppEmailException("Could not attach file using path {$filePath} " , 500, $e);
+            throw new Exceptions\AppEmailException("Could not attach file using path {$filePath} " , 500, $e);
         }
 
         return $this;
@@ -268,14 +268,14 @@ class Message
      * @param $fileData
      *
      * @return $this
-     * @throws AppEmailException
+     * @throws Exceptions\AppEmailException
      */
     public function attachFileData($fileName, $fileData)
     {
         try {
             array_push($this->_attachments, Attachment::generate($fileName, $fileData));
         } catch (\Exception $e) {
-            throw new AppEmailException("Could not attach file data for file: {$fileName}" , 500, $e);
+            throw new Exceptions\AppEmailException("Could not attach file data for file: {$fileName}" , 500, $e);
         }
 
         return $this;
@@ -284,7 +284,7 @@ class Message
 
     /************************************************************************
      * @return bool
-     * @throws AppEmailException
+     * @throws Exceptions\AppEmailException
      */
     public function send()
     {
@@ -294,7 +294,7 @@ class Message
         try {
             return mail($to, $this->Subject, $message, $headers);
         } catch (\Exception $e) {
-            throw new AppEmailException("Could not compile and send message." , 500, $e);
+            throw new Exceptions\AppEmailException("Could not compile and send message." , 500, $e);
         }
     }
 

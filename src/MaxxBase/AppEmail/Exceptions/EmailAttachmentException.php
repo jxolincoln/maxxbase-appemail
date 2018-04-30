@@ -2,7 +2,6 @@
 
 namespace MaxxBase\AppEmail\Exceptions;
 
-
 class EmailAttachmentException extends \Exception
 {
     protected $message;
@@ -14,5 +13,4 @@ class EmailAttachmentException extends \Exception
     {
         parent::__construct($message = "", $code, $previous);
     }
-
 }
