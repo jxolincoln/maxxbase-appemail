@@ -5,7 +5,7 @@
  */
 
 namespace MaxxBase\AppEmail;
-namespace MaxxBase\AppEmail\Exceptions;
+use MaxxBase\AppEmail\Exceptions;
 
 
 class Attachment
