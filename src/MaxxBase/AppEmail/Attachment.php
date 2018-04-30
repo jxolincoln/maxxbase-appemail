@@ -20,10 +20,15 @@ class Attachment
      * @param $fileData - Raw file data
      *
      */
-    public function __construct($fileName, $fileData)
+    public function __construct($fileName=null, $fileData=null)
     {
-        $this->setFileName($fileName);
-        $this->setFileData($fileData);
+        if($fileName!=null){
+            $this->setFileName($fileName);
+        }
+
+        if($fileData!=null){
+            $this->setFileData($fileData);
+        }
     }
 
     /************************************************************************
