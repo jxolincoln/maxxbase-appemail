@@ -20,7 +20,7 @@
   },
   "autoload": {
     "psr-4": {
-      "MaxxBase\\": "src/AppEmail"
+      "MaxxBase\\": "src/MaxxBase"
     }
   }
 }
