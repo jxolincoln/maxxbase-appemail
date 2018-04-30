@@ -1,0 +1,26 @@
+{
+  "name": "jxolincoln/maxxbase-appemail",
+  "description": "A set of compilation tools to generate email messages within a php application",
+  "keywords": [
+    "MaxxBase",
+    "Email"
+  ],
+  "authors": [
+    {
+      "name": "James Lincoln",
+      "email": "james@maxxsocial.com",
+      "homepage": "https://github.com/jxolincoln"
+    }
+  ],
+  "type": "library",
+  "license": "mit",
+  "require": {
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "MaxxBase\\": "src/AppEmail"
+    }
+  }
+}
