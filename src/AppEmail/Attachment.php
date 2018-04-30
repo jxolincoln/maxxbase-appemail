@@ -4,7 +4,9 @@
  * Use this class to generate an attachment to bind to an outgoing email message.
  */
 
-namespace AppEmail;
+namespace MaxxBase\AppEmail;
+namespace MaxxBase\AppEmail\Exceptions;
+
 
 class Attachment
 {
@@ -14,20 +16,21 @@ class Attachment
     public $filePath;
 
     /************************************************************************
-     * @param $fileName
-     * @param $fileData
+     * @param $fileName - Name the file will have when attached
+     * @param $fileData - Raw file data
      *
      * @return $this
      */
     public function __construction($fileName, $fileData)
     {
-        // nothing to do here yet?
+        $this->setFileName($fileName);
+        $this->setFileData($fileData);
     }
 
     /************************************************************************
      * FORCE SET THE SUGGESTED NAME OF THE FILE
      *
-     * @param $fileName
+     * @param $fileName - Name the file will have when attached
      *
      * @return $this
      */
@@ -41,7 +44,7 @@ class Attachment
     /************************************************************************
      * FORCE SET THE BINARY DATA TO BE ATTACHED
      *
-     * @param $binData
+     * @param $binData - Raw file data
      *
      * @return $this
      */
@@ -55,21 +58,22 @@ class Attachment
     /************************************************************************
      * FORCE SET THE CONTENT TYPE/DISPOSITION
      *
-     * @param $mimeType
+     * @param $mimeType - Force mime type of attached file
      *
      * @return $this
      */
     public function setMimeType($mimeType)
     {
+        $this->fileMimeType = $mimeType;
         return $this;
     }
 
     /************************************************************************
      * STATICALLY GENERATE A NEW ATTACHMENT USING A FILE PATH, AND RETURN IT IMMEDIATELY
      *
-     * @param $filePath
+     * @param $filePath - Path of file to attach
      *
-     * @return \AppEmail\Attachment
+     * @return Attachment
      */
     public static function generateFromPath($filePath)
     {
@@ -81,12 +85,12 @@ class Attachment
     }
 
     /************************************************************************
-     * STATICALLY GENERATE A NEW ATTACHMENT AND RETURN IT IMMEDIATELY
+     * STATICALLY GENERATE A NEW ATTACHMENT AND RETURN IT IMMEDIATELY.
      *
      * @param $fileName
      * @param $fileData
      *
-     * @return \AppEmail\Attachment
+     * @return Attachment
      */
     public static function generate($fileName, $fileData)
     {
@@ -120,11 +124,11 @@ class Attachment
      */
     private function _compose($separator)
     {
-        $attachment = "--{$separator}" . \AppEmail\Env::$eol;
-        $attachment .= "Content-Type: application/octet-stream; name=\"{$this->fileName}\"" . \AppEmail\Env::$eol;
-        $attachment .= "Content-Transfer-Encoding: base64" . \AppEmail\Env::$eol;
-        $attachment .= "Content-Disposition: attachment; filename=\"{$this->fileName}\"" . \AppEmail\Env::$eol
-                       . \AppEmail\Env::$eol;
+        $attachment = "--{$separator}" . Env::$eol;
+        $attachment .= "Content-Type: application/octet-stream; name=\"{$this->fileName}\"" . Env::$eol;
+        $attachment .= "Content-Transfer-Encoding: base64" . Env::$eol;
+        $attachment .= "Content-Disposition: attachment; filename=\"{$this->fileName}\"" . Env::$eol
+                       . Env::$eol;
         $attachment .= chunk_split(base64_encode($this->fileData));
 
         return $attachment;

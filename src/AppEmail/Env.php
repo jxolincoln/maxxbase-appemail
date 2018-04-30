@@ -2,7 +2,7 @@
 /************************************************************************
  * SETUP CONFIG/VARIABLES TO USE WITH THIS PACKAGE
  */
-namespace AppEmail;
+namespace MaxxBase\AppEmail;
 
 abstract class Env
 {

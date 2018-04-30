@@ -1,11 +1,11 @@
 <?php
 /************************************************************************
- * THIS MODEL IS BASED OFF OF AND UTILIZES FEATURES OF THE CModel CLASS
- * DEFINED BY YII
+ * Message Model
  */
-namespace AppEmail;
+namespace MaxxBase\AppEmail;
+namespace MaxxBase\AppEmail\Exceptions;
 
-class Message extends \CModel
+class Message
 {
     public $MessageKey = null;
     public $CampaignKey = null;
@@ -149,7 +149,7 @@ class Message extends \CModel
 
     /************************************************************************
      * ADD A SENDER EMAIL OBJECT TO THE MESSAGE
-     * @param \AppEmail\EmailAddress $sender
+     * @param EmailAddress $sender
      *
      * @return $this
      */
@@ -162,7 +162,7 @@ class Message extends \CModel
 
     /************************************************************************
      * ADD A RECIPIENT EMAIL OBJECT TO THE MESSAGE
-     * @param \AppEmail\EmailAddress $recipient
+     * @param EmailAddress $recipient
      *
      * @return $this
      */
@@ -175,7 +175,7 @@ class Message extends \CModel
 
     /************************************************************************
      * ADD A CC RECIPIENT
-     * @param \AppEmail\EmailAddress $recipient
+     * @param EmailAddress $recipient
      *
      * @return $this
      */
@@ -188,7 +188,7 @@ class Message extends \CModel
 
     /************************************************************************
      * ADD A BCC RECIPIENT
-     * @param \AppEmail\EmailAddress $recipient
+     * @param EmailAddress $recipient
      *
      * @return $this
      */
@@ -201,7 +201,7 @@ class Message extends \CModel
 
     /************************************************************************
      * ADD A REPLY TO EMAIL OBJECT TO THE MESSAGE
-     * @param \AppEmail\EmailAddress $recipient
+     * @param EmailAddress $recipient
      *
      * @return $this
      */
@@ -227,17 +227,17 @@ class Message extends \CModel
 
     /************************************************************************
      * ADD AN ATTACHMENT TO THE MESSAGE
-     * @param \AppEmail\Attachment $attachment
+     * @param Attachment $attachment
      *
      * @return $this
-     * @throws \HttpException
+     * @throws AppEmailException
      */
     public function addAttachment(Attachment $attachment)
     {
         try {
             array_push($this->_attachments, $attachment);
         } catch (\Exception $e) {
-            throw new \HttpException('500', "Could not add Attachment: " . $e->getMessage());
+            throw new AppEmailException("Could not add Attachment", 500, $e);
         }
 
         return $this;
@@ -249,15 +249,14 @@ class Message extends \CModel
      * @param $filePath
      *
      * @return $this
-     * @throws \HttpException
+     * @throws AppEmailException
      */
     public function attachFile($filePath)
     {
         try {
             array_push($this->_attachments, Attachment::generateFromPath($filePath));
         } catch (\Exception $e) {
-            throw new \HttpException('500', "Could not attach file using path: "
-                                                . $e->getMessage());
+            throw new AppEmailException("Could not attach file using path {$filePath} " , 500, $e);
         }
 
         return $this;
@@ -269,14 +268,14 @@ class Message extends \CModel
      * @param $fileData
      *
      * @return $this
-     * @throws \HttpException
+     * @throws AppEmailException
      */
     public function attachFileData($fileName, $fileData)
     {
         try {
             array_push($this->_attachments, Attachment::generate($fileName, $fileData));
         } catch (\Exception $e) {
-            throw new \HttpException('500', "Could not attach file data: " . $e->getMessage());
+            throw new AppEmailException("Could not attach file data for file: {$fileName}" , 500, $e);
         }
 
         return $this;
@@ -284,8 +283,8 @@ class Message extends \CModel
 
 
     /************************************************************************
-     * SEND THE MESSAGE AFTER COMPOSING ALL OF THE PARTS
      * @return bool
+     * @throws AppEmailException
      */
     public function send()
     {
@@ -295,7 +294,7 @@ class Message extends \CModel
         try {
             return mail($to, $this->Subject, $message, $headers);
         } catch (\Exception $e) {
-            return false;
+            throw new AppEmailException("Could not compile and send message." , 500, $e);
         }
     }
 
@@ -366,13 +365,13 @@ class Message extends \CModel
         $messageHeader[] = 'MIME-Version: 1.0';
 
         if (!empty($this->_header_entries)) {
-            $messageHeader[] = implode(\AppEmail\Env::$eol, $this->_header_entries);
+            $messageHeader[] = implode(Env::$eol, $this->_header_entries);
         }
 
         $messageHeader[] = 'Content-Type: multipart/mixed; boundary="' . $this->_separator . '"'
-                           . str_repeat(\AppEmail\Env::$eol, 2);
+                           . str_repeat(Env::$eol, 2);
 
-        return implode(\AppEmail\Env::$eol, $messageHeader);
+        return implode(Env::$eol, $messageHeader);
     }
 
     /************************************************************************
@@ -403,15 +402,15 @@ class Message extends \CModel
         if (!empty($this->MessagePlainText)) {
             $messageStack[] = "--{$this->_separator}";
             $messageStack[] = 'Content-Type: text/plain; charset=iso-8859-1';
-            $messageStack[] = 'Content-Transfer-Encoding: 7bit' . \AppEmail\Env::$eol;
-            $messageStack[] = $this->MessagePlainText . \AppEmail\Env::$eol;
+            $messageStack[] = 'Content-Transfer-Encoding: 7bit' . Env::$eol;
+            $messageStack[] = $this->MessagePlainText . Env::$eol;
         }
 
         if (!empty($this->Message)) {
             $messageStack[] = "--{$this->_separator}";
             $messageStack[] = 'Content-Type: text/html; charset=iso-8859-1';
-            $messageStack[] = 'Content-Transfer-Encoding: 8bit' . \AppEmail\Env::$eol;
-            $messageStack[] = $this->Message . \AppEmail\Env::$eol;
+            $messageStack[] = 'Content-Transfer-Encoding: 8bit' . Env::$eol;
+            $messageStack[] = $this->Message . Env::$eol;
         }
 
         if (!empty($this->_attachments)) {
@@ -423,7 +422,7 @@ class Message extends \CModel
             $messageStack[] .= "--" . $this->_separator . "--";
         }
 
-        return implode(\AppEmail\Env::$eol, $messageStack);
+        return implode(Env::$eol, $messageStack);
     }
 
     /************************************************************************
