@@ -3,6 +3,7 @@
  * Message Model
  */
 namespace MaxxBase\AppEmail;
+
 use MaxxBase\AppEmail\Exceptions;
 
 class Message
@@ -256,7 +257,7 @@ class Message
         try {
             array_push($this->_attachments, Attachment::generateFromPath($filePath));
         } catch (\Exception $e) {
-            throw new Exceptions\AppEmailException("Could not attach file using path {$filePath} " , 500, $e);
+            throw new Exceptions\AppEmailException("Could not attach file using path {$filePath} ", 500, $e);
         }
 
         return $this;
@@ -275,7 +276,7 @@ class Message
         try {
             array_push($this->_attachments, Attachment::generate($fileName, $fileData));
         } catch (\Exception $e) {
-            throw new Exceptions\AppEmailException("Could not attach file data for file: {$fileName}" , 500, $e);
+            throw new Exceptions\AppEmailException("Could not attach file data for file: {$fileName}", 500, $e);
         }
 
         return $this;
@@ -294,7 +295,7 @@ class Message
         try {
             return mail($to, $this->Subject, $message, $headers);
         } catch (\Exception $e) {
-            throw new Exceptions\AppEmailException("Could not compile and send message." , 500, $e);
+            throw new Exceptions\AppEmailException("Could not compile and send message.", 500, $e);
         }
     }
 
@@ -317,6 +318,15 @@ class Message
     }
 
     /************************************************************************
+     * GET THE COMPOSED RECIPIENT LINE
+     * @return array
+     */
+    public function composedSender()
+    {
+        return $this->_composeSender();
+    }
+
+    /************************************************************************
      * GET THE COMPOSED MESSAGE
      * @return string
      */
@@ -333,11 +343,9 @@ class Message
     {
         $messageHeader = [];
         if (!empty($this->_senders)) {
-            $messageHeader[] = 'From: ' . implode("; ",
-                                                  array_map(function (EmailAddress $email) {
-                                                      return $email->composed();
-                                                  }, $this->_senders));
+            $messageHeader[] = $this->composedSender();
         }
+
         if (!empty($this->_reply_to)) {
             $messageHeader[] = 'Reply-To: ' . implode("; ",
                                                       array_map(function (EmailAddress $email) {
@@ -392,6 +400,23 @@ class Message
     }
 
     /************************************************************************
+     * COMPOSE THE SENDER/FROM LINE BASED ON THE ADDED EMAIL ADDRESSES
+     * @return array
+     */
+    public function _composeSender()
+    {
+        $messageSenders = '';
+        if (!empty($this->_senders)) {
+            $messageSenders = 'From: ' . implode("; ",
+                                                 array_map(function (EmailAddress $email) {
+                                                     return $email->composed();
+                                                 }, $this->_senders));
+        }
+
+        return $messageSenders;
+    }
+
+    /************************************************************************
      * COMPOSE THE MESSAGE
      * @return string
      */
@@ -434,7 +459,7 @@ class Message
      */
     private function _generateMessageKey()
     {
-        return md5(rand(0, microtime()));
+        return md5(rand(0, (int)microtime()));
     }
 
     /************************************************************************
@@ -443,6 +468,22 @@ class Message
      */
     private function _generateSeparator()
     {
-        return md5(rand(0, microtime()));
+        return md5(rand(0, (int)microtime()));
+    }
+
+
+    /************************************************************************
+     * @return string
+     */
+    public function __toString()
+    {
+        $output = [
+            $this->composedHeader(),
+            'Subject: ' . $this->Subject . Env::$eol,
+            $this->composedRecipient() . Env::$eol,
+            $this->composedMessage()
+        ];
+
+        return implode("", $output);
     }
 }
