@@ -347,12 +347,12 @@ class Message
         }
 
         if (!empty($this->_reply_to)) {
-            $messageHeader[] = 'Reply-To: ' . implode("; ",
+            $messageHeader[] = 'Return-Path: ' . implode("; ",
                                                       array_map(function (EmailAddress $email) {
                                                           return $email->composed();
                                                       }, $this->_reply_to));
         } else {
-            $messageHeader[] = 'Reply-To: ' . implode("; ",
+            $messageHeader[] = 'Return-Path: ' . implode("; ",
                                                       array_map(function (EmailAddress $email) {
                                                           return $email->composed();
                                                       }, $this->_senders));
